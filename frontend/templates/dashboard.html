@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
     <!-- Navbar -->
     <nav class="bg-white shadow sticky top-0 z-10">
@@ -23,55 +23,30 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-12">
-        <div class="max-w-7xl mx-auto px-6 text-center sm:text-left">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-2">Welcome, {{ user.name }} 👋</h2>
-            <p class="text-lg opacity-90">Explore and shop from our latest collections</p>
-        </div>
-    </section>
+    <!-- Main Section -->
+    <div class="flex flex-1 max-w-7xl mx-auto px-6 py-8 gap-6">
 
-    <!-- Categories Section -->
-    <section class="max-w-7xl mx-auto px-6 py-10">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-bold text-gray-800">Categories</h3>
-            <a href="{{ url_for('category.list_categories') }}" class="text-blue-500 hover:underline text-sm">
-                View all
-            </a>
-        </div>
+        <!-- Sidebar: Categories -->
+        <aside class="w-64 bg-white rounded-2xl shadow-md p-6 flex-shrink-0">
+            <h3 class="text-xl font-bold mb-4">Categories</h3>
+            <ul class="space-y-2">
+                {% for category in categories %}
+                <li>
+                    <a href="{{ url_for('product.list_products', category=category.name) }}"
+                        class="block px-3 py-2 rounded hover:bg-blue-100 {{ 'bg-blue-50 font-semibold' if request.args.get('category') == category.name }}">
+                        {{ category.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </aside>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-            {% for category in categories %}
-            <a href="{{ url_for('product.list_products', category=category.name) }}"
-                class="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-6 flex flex-col items-center justify-center">
-                <div
-                    class="h-20 w-20 mb-3 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold">
-                    {{ category.name[0] }}
-                </div>
-                <p class="font-semibold text-gray-800 text-center">{{ category.name }}</p>
-            </a>
-            {% endfor %}
-        </div>
-    </section>
-
-    <!-- Featured Products Section -->
-    <section class="max-w-7xl mx-auto px-6 pb-12">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-bold text-gray-800">Featured Products</h3>
-            <a href="{{ url_for('product.list_products') }}" class="text-blue-500 hover:underline text-sm">
-                View all
-            </a>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Products Section -->
+        <section class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {% for product in products %}
             <div class="bg-white rounded-2xl shadow-md hover:shadow-lg transition flex flex-col">
-                <script>
-                    console.log("Product image URL:", "{{ product.image_url }}");
-                </script>
 
-
-                <!-- Image Placeholder -->
+                <!-- Product Image -->
                 {% if product.image_url %}
                 <img src="{{ product.image_url }}" alt="{{ product.name }}"
                     class="h-44 w-full object-cover rounded-t-2xl">
@@ -111,8 +86,9 @@
 
             </div>
             {% endfor %}
-        </div>
-    </section>
+        </section>
+
+    </div>
 
 </body>
 
