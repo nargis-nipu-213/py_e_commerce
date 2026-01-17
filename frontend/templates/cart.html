@@ -24,22 +24,32 @@
         {% if cart %}
         <div class="space-y-6">
 
-            {% set total_price = 0 %}
             {% for item in cart %}
-            {% set total_price = total_price + (item.price * item.quantity) %}
-
             <div
-                class="bg-white rounded-2xl shadow-md p-4 flex flex-col sm:flex-row justify-between items-center hover:shadow-lg transition">
+                class="bg-white rounded-2xl shadow-md p-4 flex flex-col sm:flex-row justify-between items-center hover:shadow-lg transition gap-4">
+
+                <!-- Product Image -->
+                <div class="w-24 h-24 flex-shrink-0">
+                    {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.product_name }}"
+                        class="w-full h-full object-cover rounded-xl">
+                    {% else %}
+                    <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 rounded-xl">
+                        No Image
+                    </div>
+                    {% endif %}
+                </div>
+
                 <!-- Product Info -->
-                <div class="flex-1 mb-2 sm:mb-0">
+                <div class="flex-1">
                     <h2 class="font-semibold text-lg text-gray-800">{{ item.product_name }}</h2>
                     <p class="text-gray-500">Price: ${{ item.price }}</p>
                     <p class="text-gray-500">Quantity: {{ item.quantity }}</p>
+                    <p class="font-bold text-gray-800 mt-1">Item Total: ${{ (item.price * item.quantity)|round(2) }}</p>
                 </div>
 
-                <!-- Total & Actions -->
+                <!-- Actions -->
                 <div class="flex flex-col sm:items-end gap-2">
-                    <p class="font-bold text-gray-800">Total: ${{ (item.price * item.quantity)|float }}</p>
                     <form method="POST" action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}">
                         <button type="submit"
                             class="bg-red-500 text-white px-4 py-1 rounded-xl hover:bg-red-600 transition">
@@ -54,7 +64,7 @@
 
         <!-- Cart Total and Actions -->
         <div class="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p class="text-2xl font-bold text-gray-800">Total: ${{ total_price|float }}</p>
+            <p class="text-2xl font-bold text-gray-800">Total: ${{ total_price }}</p>
 
             <div class="flex gap-2 flex-wrap">
                 <form method="POST" action="{{ url_for('order.place_order') }}">
