@@ -8,36 +8,45 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="min-h-screen bg-gray-100">
+<body class="min-h-screen bg-gray-50">
 
     <!-- Navbar -->
-    <nav class="bg-white shadow sticky top-0 z-10">
+    <nav class="bg-white shadow sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-blue-600">MyShop</h1>
+            <h1 class="text-2xl font-extrabold text-blue-600">MyShop</h1>
             <div class="flex items-center gap-4 text-sm">
                 {% if session.get('user') %}
-                <span class="text-gray-600 hidden sm:block">Hi, {{ session.get('user').name }}</span>
-                <a href="{{ url_for('cart.view_cart') }}" class="hover:text-blue-500">Cart</a>
-                <a href="{{ url_for('order.view_my_orders') }}" class="hover:text-blue-500">Orders</a>
-                <a href="{{ url_for('auth.logout') }}" class="text-red-500 hover:underline">Logout</a>
+                <span class="text-gray-700 hidden sm:block">Hi, {{ session.get('user').name }}</span>
+                <a href="{{ url_for('cart.view_cart') }}"
+                    class="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 font-medium hover:bg-blue-100 transition">Cart</a>
+                <a href="{{ url_for('order.view_my_orders') }}"
+                    class="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 font-medium hover:bg-blue-100 transition">Orders</a>
+                <a href="{{ url_for('auth.logout') }}"
+                    class="px-3 py-1 rounded-lg bg-red-50 text-red-600 font-medium hover:bg-red-100 transition">Logout</a>
                 {% else %}
-                <a href="{{ url_for('auth.login') }}" class="hover:text-blue-500">Login</a>
-                <a href="{{ url_for('auth.register') }}" class="hover:text-blue-500">Register</a>
+                <a href="{{ url_for('auth.login') }}"
+                    class="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 font-medium hover:bg-blue-100 transition">Login</a>
+                <a href="{{ url_for('auth.register') }}"
+                    class="px-3 py-1 rounded-lg bg-green-50 text-green-700 font-medium hover:bg-green-100 transition">Register</a>
                 {% endif %}
             </div>
         </div>
     </nav>
 
     <!-- Product Details Section -->
-    <section class="max-w-7xl mx-auto p-6 mt-6 bg-white rounded-2xl shadow-lg flex flex-col md:flex-row gap-8">
+    <section class="max-w-7xl mx-auto p-6 mt-8 bg-white rounded-3xl shadow-lg flex flex-col md:flex-row gap-8">
 
-        <!-- Left: Image -->
+        <!-- Left: Product Image -->
         <div class="flex-1">
             {% if product.image_url %}
-            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="h-96 w-full object-cover rounded-2xl">
+            <!-- Clickable image opens in new tab -->
+            <a href="{{ product.image_url }}" target="_blank" rel="noopener noreferrer">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}"
+                    class="h-[28rem] w-full object-cover rounded-3xl shadow-sm hover:scale-105 transition transform duration-200">
+            </a>
             {% else %}
             <div
-                class="h-96 bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400 text-2xl font-semibold">
+                class="h-[28rem] bg-gray-200 rounded-3xl flex items-center justify-center text-gray-400 text-3xl font-semibold">
                 No Image
             </div>
             {% endif %}
@@ -46,31 +55,42 @@
         <!-- Right: Product Info -->
         <div class="flex-1 flex flex-col justify-between">
             <div class="space-y-4">
-                <h1 class="text-4xl font-bold text-gray-800">{{ product.name }}</h1>
-                <p class="text-gray-500 text-sm">Category: <span class="font-medium text-gray-700">{{ product.category
-                        }}</span></p>
-                <p class="text-3xl font-bold text-blue-600">$ {{ product.price }}</p>
-                {% if product.stock > 0 %}
-                <p class="text-green-600 font-medium">In stock</p>
-                {% else %}
-                <p class="text-red-600 font-medium">Out of stock</p>
+                <h1 class="text-5xl font-extrabold text-gray-900">{{ product.name }}</h1>
+
+                {% if product.category %}
+                <p class="text-gray-500 text-sm">
+                    Category:
+                    <span class="text-blue-600 font-semibold bg-blue-100 px-2 py-1 rounded-md">{{ product.category
+                        }}</span>
+                </p>
                 {% endif %}
-                <p class="text-gray-700">{{ product.description or "No description available." }}</p>
+
+                <p class="text-4xl font-bold text-blue-600">$ {{ product.price }}</p>
+
+                {% if product.stock > 0 %}
+                <p class="text-green-600 font-semibold text-lg">In stock</p>
+                {% else %}
+                <p class="text-red-600 font-semibold text-lg">Out of stock</p>
+                {% endif %}
+
+                <p class="text-gray-700 text-base leading-relaxed">{{ product.description or "No description available."
+                    }}</p>
             </div>
 
-            <!-- Add to Cart & Back Buttons -->
-            <div class="mt-6 flex flex-col gap-4">
+            <!-- Action Buttons -->
+            <div class="mt-8 flex flex-col gap-4">
                 {% if product.stock > 0 %}
                 <form method="POST" action="{{ url_for('cart.add_to_cart', product_id=product.id) }}">
                     <button type="submit"
-                        class="w-full bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 transition duration-200">
+                        class="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-lg hover:from-blue-600 hover:to-blue-700 transition duration-200">
                         Add to Cart
                     </button>
                 </form>
                 {% endif %}
+
                 <a href="{{ url_for('product.list_products') }}"
-                    class="w-full text-center text-blue-500 font-medium hover:underline py-3 border rounded-xl">
-                    Back to Products
+                    class="w-full text-center text-blue-600 font-medium hover:underline py-3 border rounded-2xl">
+                    ← Back to Products
                 </a>
             </div>
         </div>

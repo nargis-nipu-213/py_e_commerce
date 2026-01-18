@@ -37,7 +37,7 @@ def list_products():
     except Exception:
         products = []
 
-    return render_template("products.html", products=products)
+    return render_template("products.html", products=products, category=category)
 
 
 # View single product details

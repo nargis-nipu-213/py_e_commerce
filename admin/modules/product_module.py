@@ -45,47 +45,83 @@ def add_product():
         stock = request.form.get("stock")
         category_id = request.form.get("category_id")
         description = request.form.get("description")
-        image_file = request.files.get("image_file")  # file input name
-
-        print(image_file)
+        image_file = request.files.get("image_file")
 
         image_url = None
-        # Upload image first if a file is selected
-        if image_file and image_file.filename != "":
-            files = {"image": image_file}
+
+        # ✅ IMAGE UPLOAD (FIXED)
+        if image_file and image_file.filename:
+            files = {
+                "image": (
+                    image_file.filename,                 # real filename
+                    image_file.stream,                   # file stream
+                    image_file.mimetype or "application/octet-stream",
+                )
+            }
+
             try:
-                # No headers here! This ensures proper multipart encoding
-                img_resp = requests.post(f"{BACKEND_URL}/images/upload", files=files)
+                img_resp = requests.post(
+                    f"{BACKEND_URL}/images/upload",
+                    files=files,
+                    timeout=10,
+                )
+
+                # rewind stream (good practice)
+                image_file.stream.seek(0)
+
                 if img_resp.status_code == 200:
                     image_url = img_resp.json().get("data", {}).get("image_url")
                 else:
                     error = img_resp.json().get("message", "Image upload failed")
-                    return render_template("admin_add_product.html", categories=categories, error=error)
+                    return render_template(
+                        "admin_add_product.html",
+                        categories=categories,
+                        error=error,
+                    )
             except Exception as e:
-                return render_template("admin_add_product.html", categories=categories, error=str(e))
+                return render_template(
+                    "admin_add_product.html",
+                    categories=categories,
+                    error=str(e),
+                )
 
-        # Prepare product payload
+        # Product payload
         data = {
             "name": name,
             "price": price,
             "stock": stock,
             "category_id": category_id,
             "description": description,
-            "image_url": image_url
+            "image_url": image_url,
         }
 
-        # Send product creation request
+        # Create product
         try:
-            resp = requests.post(f"{BACKEND_URL}/products/", headers=headers, json=data)
+            resp = requests.post(
+                f"{BACKEND_URL}/products/",
+                headers=headers,
+                json=data,
+                timeout=10,
+            )
+
             if resp.status_code == 200:
                 return redirect(url_for("product.list_products"))
             else:
                 error = resp.json().get("message", "Failed to add product")
-                return render_template("admin_add_product.html", categories=categories, error=error)
+                return render_template(
+                    "admin_add_product.html",
+                    categories=categories,
+                    error=error,
+                )
         except Exception as e:
-            return render_template("admin_add_product.html", categories=categories, error=str(e))
+            return render_template(
+                "admin_add_product.html",
+                categories=categories,
+                error=str(e),
+            )
 
     return render_template("admin_add_product.html", categories=categories)
+
 
 
 @product_bp.route("/delete/<int:product_id>", methods=["POST"])

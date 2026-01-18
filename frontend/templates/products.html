@@ -12,8 +12,16 @@
 
     <div class="max-w-7xl mx-auto">
 
-        <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">Products</h1>
+        <!-- Page Title -->
+        <h1 class="text-4xl font-bold text-gray-800 mb-2 text-center">Products</h1>
 
+        <!-- Selected Category -->
+        {% if category %}
+        <p class="text-gray-600 text-center mb-6 text-lg">Category: <span class="font-semibold">{{ category }}</span>
+        </p>
+        {% endif %}
+
+        <!-- Messages -->
         {% if message %}
         <p class="text-green-500 text-center mb-4">{{ message }}</p>
         {% endif %}
@@ -21,6 +29,8 @@
         <p class="text-red-500 text-center mb-4">{{ error }}</p>
         {% endif %}
 
+        {% if products %}
+        <!-- Products Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
             {% for product in products %}
@@ -70,11 +80,31 @@
             {% endfor %}
 
         </div>
+        {% else %}
+        <!-- Empty Category / No Products -->
+        <div class="flex flex-col items-center justify-center mt-20">
+            <!-- Simple Icon / Illustration -->
+            <div
+                class="h-40 w-40 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-6xl font-bold mb-6">
+                🛒
+            </div>
 
-        <div class="mt-8 text-center">
-            <a href="{{ url_for('dashboard') }}" class="text-blue-500 hover:underline font-medium">← Back to
-                Dashboard</a>
+            <!-- Message -->
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">No products found</h2>
+            {% if category %}
+            <p class="text-gray-600 text-center mb-6">There are no products available in the <span
+                    class="font-semibold">{{ category }}</span> category.</p>
+            {% else %}
+            <p class="text-gray-600 text-center mb-6">There are currently no products available.</p>
+            {% endif %}
+
+            <!-- Back Button -->
+            <a href="{{ url_for('dashboard') }}"
+                class="bg-gray-200 text-gray-800 px-6 py-3 rounded-xl hover:bg-gray-300 font-semibold transition">
+                ← Back to Dashboard
+            </a>
         </div>
+        {% endif %}
 
     </div>
 
