@@ -20,4 +20,4 @@ def dashboard():
     return render_template("admin_dashboard.html", admin=session["admin"])
 
 if __name__ == "__main__":
-    app.run(port=5002, debug=True)
+    app.run(port=5002, debug=True, use_reloader=False)
