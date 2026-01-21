@@ -33,10 +33,12 @@
                 <tr class="hover:bg-gray-100">
                     <td class="border px-4 py-2">{{ category.id }}</td>
                     <td class="border px-4 py-2">{{ category.name }}</td>
-                    <td class="border px-4 py-2 flex gap-2">
-                        <a href="#" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Edit</a>
-                        <a href="{{ url_for('category.delete_category', category_id=category.id) }}"
-                            class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Delete</a>
+                    <td class="border px-4 py-2">
+                        <form method="POST" action="{{ url_for('category.delete_category', category_id=category.id) }}"
+                            onsubmit="return confirm('Delete this category?');">
+                            <button type="submit"
+                                class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}

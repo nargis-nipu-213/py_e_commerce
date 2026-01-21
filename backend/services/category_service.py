@@ -23,3 +23,11 @@ class CategoryService:
         finally:
             cursor.close()
             conn.close()
+
+    def delete(self, category_id):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM categories WHERE id=%s", (category_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()

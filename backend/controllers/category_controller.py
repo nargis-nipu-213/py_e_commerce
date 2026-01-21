@@ -25,3 +25,9 @@ def add_category():
         return response_error("Category already exists")
 
     return response_success(category, "Category added")
+
+
+@admin_required
+def delete_category(category_id):
+    category_service.delete(category_id)
+    return response_success({}, "Category deleted")
